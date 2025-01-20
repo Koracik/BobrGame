@@ -3,347 +3,386 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Бобриный пруд</title>
+    <title>Бобриный Пруд🏞️</title>
     <style>
         :root {
-            --primary: #1a2f1a;
-            --secondary: #3d5a45;
-            --accent: #DEB887;
-            --text: #e8f1e8;
+            --bg: #f8f5f2;
+            --primary: #3e2d29;
+            --accent: #8b5d33;
+            --secondary: #6b8e23;
+            --border: #dcd4cc;
+            --boost: #ff6b6b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(160deg, var(--primary), #142814);
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--primary);
+            line-height: 1.6;
+            padding: 1rem;
             min-height: 100vh;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            color: var(--text);
-            user-select: none;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 600px;
             margin: 0 auto;
-            text-align: center;
-        }
-
-        .title {
-            font-size: 3.5rem;
-            margin: 2rem 0;
-            font-weight: 700;
-            background: linear-gradient(to right, #DEB887, #b89a6e);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .main-panel {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
+            flex-direction: column;
             gap: 2rem;
-            margin: 2rem 0;
         }
 
-        .beaver-btn {
-            background: var(--secondary);
-            width: 220px;
-            height: 220px;
+        .header {
+            text-align: center;
+            padding: 2rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .click-area {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            background: white;
             border-radius: 50%;
-            border: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: transform 0.1s;
+            border: none;
             position: relative;
-            overflow: hidden;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
         }
 
-        .beaver-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+        .click-area:active {
+            transform: scale(0.98);
         }
 
-        .beaver-btn:active {
-            transform: scale(0.95);
-        }
-
-        .beaver-btn::before {
-            content: '';
+        .click-area::after {
+            content: '🦫';
+            font-size: 4rem;
             position: absolute;
-            width: 100%;
-            height: 100%;
-            background: url('https://www.svgrepo.com/show/532548/beaver.svg') center/70% no-repeat;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
 
         .stats {
-            background: rgba(255,255,255,0.1);
-            padding: 1.5rem;
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
-            margin: 2rem auto;
-            width: 90%;
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
+            text-align: center;
         }
 
-        .stat-item {
-            padding: 1rem;
-            background: rgba(0,0,0,0.2);
+        .stat {
+            background: white;
+            padding: 1.5rem;
             border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
         }
 
         .shop {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            padding: 2rem;
+            gap: 1rem;
         }
 
         .upgrade {
-            background: linear-gradient(145deg, var(--secondary), #2d4535);
-            padding: 1.5rem;
-            border-radius: 16px;
-            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border);
             transition: all 0.2s;
-            border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
             position: relative;
         }
 
         .upgrade:hover {
-            transform: translateY(-5px);
-            background: linear-gradient(145deg, #465f4d, #2d4535);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
 
-        .upgrade::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: 16px;
-            border: 2px solid rgba(222,184,135,0.3);
-            opacity: 0;
-            transition: opacity 0.2s;
+        .upgrade:active {
+            transform: none;
         }
 
-        .upgrade:hover::after {
-            opacity: 1;
-        }
-
-        .progress-bar {
-            height: 6px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 3px;
-            margin-top: 1rem;
-            overflow: hidden;
-        }
-
-        .progress {
-            height: 100%;
+        .upgrade-cost {
             background: var(--accent);
-            width: 0;
-            transition: width 0.3s;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
         }
 
-        @media (max-width: 768px) {
-            .main-panel {
-                grid-template-columns: 1fr;
-            }
-            
-            .stats {
-                grid-template-columns: 1fr;
-            }
+        .upgrade-badge {
+            background: var(--secondary);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .combo-counter {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: var(--accent);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .boost-active {
+            animation: pulse 1s infinite;
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            0% { box-shadow: 0 0 0 0 rgba(255,107,107,0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255,107,107,0); }
+            100% { box-shadow: 0 0 0 0 rgba(255,107,107,0); }
+        }
+
+        @media (max-width: 480px) {
+            .click-area {
+                width: 160px;
+                height: 160px;
+            }
+            
+            .stat {
+                padding: 1rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="title">🪵 Бобриный пруд</h1>
+        <header class="header">
+            <h1>Бобриный Пруд Pro</h1>
+        </header>
 
-        <div class="main-panel">
-            <div>
-                <button class="beaver-btn" onclick="clickBeaver()"></button>
-                <div class="score-container" style="margin-top: 2rem;">
-                    <h2 style="font-size: 2rem; margin: 1rem 0;">
-                        <span id="score">0</span> 🪵
-                    </h2>
-                    <p style="opacity: 0.8;">За клик: <span id="perClick">1</span></p>
+        <main class="main">
+            <button class="click-area" id="clicker" onclick="clickBeaver()"></button>
+
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value" id="score">0</div>
+                    <div>Прутиков</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="perClick">1</div>
+                    <div>За клик</div>
                 </div>
             </div>
 
             <div class="shop">
-                <div class="upgrade" onclick="buyUpgrade('sharpTeeth', 50)">
-                    <h3>🔪 Острые зубы</h3>
-                    <p>+2 к клику</p>
-                    <div class="progress-bar">
-                        <div class="progress" id="sharpTeeth-progress"></div>
+                <div class="upgrade" onclick="buyUpgrade('teeth')">
+                    <div>
+                        <h3>Острые зубы</h3>
+                        <p>+2 к базовому клику</p>
+                        <div class="upgrade-badge">Уровень: <span id="teeth-level">1</span></div>
                     </div>
-                    <p style="margin-top: 0.5rem;">🪵 <span id="sharpTeeth-cost">50</span></p>
+                    <div class="upgrade-cost" id="teeth-cost">50</div>
                 </div>
-                <div class="upgrade" onclick="buyUpgrade('strongTail', 100)">
-                    <h3>🌀 Крепкий хвост</h3>
-                    <p>+5 к клику</p>
-                    <div class="progress-bar">
-                        <div class="progress" id="strongTail-progress"></div>
+                
+                <div class="upgrade" onclick="buyUpgrade('tail')">
+                    <div>
+                        <h3>Крепкий хвост</h3>
+                        <p>+5 к клику каждые 5 уровней</p>
+                        <div class="upgrade-badge">Уровень: <span id="tail-level">1</span></div>
                     </div>
-                    <p style="margin-top: 0.5rem;">🪵 <span id="strongTail-cost">100</span></p>
+                    <div class="upgrade-cost" id="tail-cost">100</div>
                 </div>
-            </div>
-        </div>
 
-        <div class="stats">
-            <div class="stat-item">
-                <h3>Всего собрано</h3>
-                <p style="font-size: 1.5rem;"><span id="totalScore">0</span> 🪵</p>
+                <div class="upgrade" onclick="buyBoost()" id="boost-button">
+                    <div>
+                        <h3>Энергетический орех 🌰</h3>
+                        <p>+300% к клику на 30 сек</p>
+                        <div class="upgrade-badge" id="boost-timer"></div>
+                    </div>
+                    <div class="upgrade-cost">250</div>
+                </div>
             </div>
-            <div class="stat-item">
-                <h3>Авто-клик</h3>
-                <p style="font-size: 1.5rem;"><span id="autoClick">0</span>/сек</p>
-            </div>
-            <div class="stat-item">
-                <h3>Уровень</h3>
-                <p style="font-size: 1.5rem;"><span id="level">1</span> 🌟</p>
-            </div>
-        </div>
+
+            <div class="combo-counter" id="combo">Комбо: 1x</div>
+        </main>
     </div>
 
     <script>
+        // Игровые переменные
         let score = 0;
-        let totalScore = 0;
-        let perClick = 1;
-        let autoClick = 0;
-        let level = 1;
-        
+        let perClickBase = 1;
+        let combo = 1;
+        let comboTimeout;
+        let boostActive = false;
+        let boostTimeLeft = 0;
+
+        // Система улучшений
         const upgrades = {
-            sharpTeeth: { 
-                bought: 0,
+            teeth: { 
+                level: 1,
                 baseCost: 50,
-                effect: 2,
-                maxLevel: 5
+                costMultiplier: 1.8,
+                effect: 2 
             },
-            strongTail: { 
-                bought: 0,
+            tail: { 
+                level: 1,
                 baseCost: 100,
-                effect: 5,
-                maxLevel: 3
+                costMultiplier: 2.2,
+                effect: 5 
             }
         };
 
-        function updateDisplay() {
-            document.getElementById('score').textContent = Math.floor(score);
-            document.getElementById('perClick').textContent = perClick;
-            document.getElementById('totalScore').textContent = Math.floor(totalScore);
-            document.getElementById('autoClick').textContent = autoClick;
-            document.getElementById('level').textContent = level;
-
-            // Обновление прогресса улучшений
-            for (const upgrade in upgrades) {
-                const element = document.getElementById(`${upgrade}-progress`);
-                const costElement = document.getElementById(`${upgrade}-cost`);
-                if (element && costElement) {
-                    element.style.width = `${(upgrades[upgrade].bought / upgrades[upgrade].maxLevel) * 100}%`;
-                    costElement.textContent = Math.floor(getUpgradeCost(upgrade));
-                }
-            }
+        // Расчет силы клика
+        function getPerClick() {
+            let multiplier = 1;
+            if (boostActive) multiplier *= 4;
+            multiplier *= combo;
+            
+            return (perClickBase + 
+                   upgrades.teeth.level * upgrades.teeth.effect + 
+                   Math.floor(upgrades.tail.level / 5) * upgrades.tail.effect) * multiplier;
         }
 
-        function getUpgradeCost(upgradeName) {
-            return upgrades[upgradeName].baseCost * (upgrades[upgradeName].bought + 1);
-        }
-
+        // Обработка клика
         function clickBeaver() {
-            score += perClick;
-            totalScore += perClick;
-            checkLevelUp();
-            updateDisplay();
-            addClickEffect();
+            score += getPerClick();
+            handleCombo();
+            updateUI();
+            animateClick();
         }
 
-        function buyUpgrade(upgradeName) {
-            const upgrade = upgrades[upgradeName];
-            const cost = getUpgradeCost(upgradeName);
+        // Система комбо
+        function handleCombo() {
+            combo = Math.min(combo + 0.1, 3);
+            clearTimeout(comboTimeout);
+            comboTimeout = setTimeout(() => combo = 1, 3000);
             
-            if (upgrade.bought < upgrade.maxLevel && score >= cost) {
+            const comboElement = document.getElementById('combo');
+            comboElement.style.opacity = '1';
+            comboElement.textContent = `Комбо: ${combo.toFixed(1)}x`;
+            setTimeout(() => comboElement.style.opacity = '0', 100);
+        }
+
+        // Покупка улучшений
+        function buyUpgrade(type) {
+            const upgrade = upgrades[type];
+            const cost = Math.floor(upgrade.baseCost * Math.pow(upgrade.costMultiplier, upgrade.level - 1));
+            
+            if (score >= cost) {
                 score -= cost;
-                upgrade.bought++;
-                perClick += upgrade.effect;
-                checkLevelUp();
-                updateDisplay();
+                upgrade.level++;
+                updateUI();
+                saveGame();
             }
         }
 
-        function checkLevelUp() {
-            const newLevel = Math.floor(totalScore / 1000) + 1;
-            if (newLevel > level) {
-                level = newLevel;
-                perClick += level * 2;
-                autoClick += level;
+        // Активация буста
+        function buyBoost() {
+            if (score >= 250 && !boostActive) {
+                score -= 250;
+                boostActive = true;
+                boostTimeLeft = 30;
+                updateUI();
+                saveGame();
+                
+                const boostTimer = setInterval(() => {
+                    boostTimeLeft--;
+                    if (boostTimeLeft <= 0) {
+                        boostActive = false;
+                        clearInterval(boostTimer);
+                    }
+                    updateBoostTimer();
+                }, 1000);
             }
         }
 
-        function addClickEffect() {
-            const effect = document.createElement('div');
-            effect.style.position = 'fixed';
-            effect.style.left = `${event.clientX}px`;
-            effect.style.top = `${event.clientY}px`;
-            effect.style.pointerEvents = 'none';
-            effect.style.transform = 'translate(-50%, -50%)';
-            effect.style.fontSize = '1.2rem';
-            effect.style.color = '#DEB887';
-            effect.textContent = `+${perClick}`;
+        // Обновление интерфейса
+        function updateUI() {
+            document.getElementById('score').textContent = Math.floor(score);
+            document.getElementById('perClick').textContent = getPerClick().toFixed(1);
             
-            document.body.appendChild(effect);
+            // Обновление улучшений
+            for (const type in upgrades) {
+                document.getElementById(`${type}-level`).textContent = upgrades[type].level;
+                document.getElementById(`${type}-cost`).textContent = Math.floor(
+                    upgrades[type].baseCost * Math.pow(upgrades[type].costMultiplier, upgrades[type].level - 1)
+                );
+            }
             
-            setTimeout(() => {
-                effect.style.transform = 'translate(-50%, -150%)';
-                effect.style.opacity = '0';
-                setTimeout(() => effect.remove(), 1000);
-            }, 50);
+            // Обновление буста
+            const boostButton = document.getElementById('boost-button');
+            boostActive ? 
+                boostButton.classList.add('boost-active') : 
+                boostButton.classList.remove('boost-active');
         }
 
-        // Авто-клик
-        setInterval(() => {
-            score += autoClick;
-            totalScore += autoClick;
-            checkLevelUp();
-            updateDisplay();
-        }, 1000);
+        // Таймер буста
+        function updateBoostTimer() {
+            const boostTimer = document.getElementById('boost-timer');
+            if (boostActive) {
+                boostTimer.textContent = `${boostTimeLeft} сек`;
+            } else {
+                boostTimer.textContent = 'Не активен';
+            }
+        }
 
-        // Сохранение
+        // Анимация клика
+        function animateClick() {
+            const clicker = document.getElementById('clicker');
+            clicker.style.transform = 'scale(0.95)';
+            setTimeout(() => clicker.style.transform = 'scale(1)', 100);
+        }
+
+        // Система сохранения
         function saveGame() {
             const saveData = {
                 score,
-                totalScore,
-                perClick,
-                autoClick,
-                level,
-                upgrades
+                perClickBase,
+                upgrades,
+                boostActive,
+                boostTimeLeft
             };
-            localStorage.setItem('beaverPondSave', JSON.stringify(saveData));
+            localStorage.setItem('beaverPondProSave', JSON.stringify(saveData));
         }
 
-        // Загрузка
+        // Загрузка сохранения
         function loadGame() {
-            const saveData = JSON.parse(localStorage.getItem('beaverPondSave'));
+            const saveData = JSON.parse(localStorage.getItem('beaverPondProSave'));
             if (saveData) {
                 score = saveData.score || 0;
-                totalScore = saveData.totalScore || 0;
-                perClick = saveData.perClick || 1;
-                autoClick = saveData.autoClick || 0;
-                level = saveData.level || 1;
-                upgrades.sharpTeeth.bought = saveData.upgrades?.sharpTeeth.bought || 0;
-                upgrades.strongTail.bought = saveData.upgrades?.strongTail.bought || 0;
-                updateDisplay();
+                perClickBase = saveData.perClickBase || 1;
+                upgrades.teeth.level = saveData.upgrades?.teeth.level || 1;
+                upgrades.tail.level = saveData.upgrades?.tail.level || 1;
+                boostActive = saveData.boostActive || false;
+                boostTimeLeft = saveData.boostTimeLeft || 0;
+                
+                if (boostActive) {
+                    const boostTimer = setInterval(() => {
+                        boostTimeLeft--;
+                        if (boostTimeLeft <= 0) {
+                            boostActive = false;
+                            clearInterval(boostTimer);
+                        }
+                        updateBoostTimer();
+                    }, 1000);
+                }
+                
+                updateUI();
             }
         }
 
@@ -353,4 +392,4 @@
         loadGame();
     </script>
 </body>
-  </html>
+</html>
