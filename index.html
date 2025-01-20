@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бобриный пруд</title>
+    <style>
+        :root {
+            --primary: #1a2f1a;
+            --secondary: #3d5a45;
+            --accent: #DEB887;
+            --text: #e8f1e8;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(160deg, var(--primary), #142814);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            color: var(--text);
+            user-select: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .title {
+            font-size: 3.5rem;
+            margin: 2rem 0;
+            font-weight: 700;
+            background: linear-gradient(to right, #DEB887, #b89a6e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .main-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .beaver-btn {
+            background: var(--secondary);
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+
+        .beaver-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+        }
+
+        .beaver-btn:active {
+            transform: scale(0.95);
+        }
+
+        .beaver-btn::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.svgrepo.com/show/532548/beaver.svg') center/70% no-repeat;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .stats {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            margin: 2rem auto;
+            width: 90%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .stat-item {
+            padding: 1rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+        }
+
+        .shop {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .upgrade {
+            background: linear-gradient(145deg, var(--secondary), #2d4535);
+            padding: 1.5rem;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        .upgrade:hover {
+            transform: translateY(-5px);
+            background: linear-gradient(145deg, #465f4d, #2d4535);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+
+        .upgrade::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 16px;
+            border: 2px solid rgba(222,184,135,0.3);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .upgrade:hover::after {
+            opacity: 1;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 3px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: var(--accent);
+            width: 0;
+            transition: width 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .main-panel {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">🪵 Бобриный пруд</h1>
+
+        <div class="main-panel">
+            <div>
+                <button class="beaver-btn" onclick="clickBeaver()"></button>
+                <div class="score-container" style="margin-top: 2rem;">
+                    <h2 style="font-size: 2rem; margin: 1rem 0;">
+                        <span id="score">0</span> 🪵
+                    </h2>
+                    <p style="opacity: 0.8;">За клик: <span id="perClick">1</span></p>
+                </div>
+            </div>
+
+            <div class="shop">
+                <div class="upgrade" onclick="buyUpgrade('sharpTeeth', 50)">
+                    <h3>🔪 Острые зубы</h3>
+                    <p>+2 к клику</p>
+                    <div class="progress-bar">
+                        <div class="progress" id="sharpTeeth-progress"></div>
+                    </div>
+                    <p style="margin-top: 0.5rem;">🪵 <span id="sharpTeeth-cost">50</span></p>
+                </div>
+                <div class="upgrade" onclick="buyUpgrade('strongTail', 100)">
+                    <h3>🌀 Крепкий хвост</h3>
+                    <p>+5 к клику</p>
+                    <div class="progress-bar">
+                        <div class="progress" id="strongTail-progress"></div>
+                    </div>
+                    <p style="margin-top: 0.5rem;">🪵 <span id="strongTail-cost">100</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <h3>Всего собрано</h3>
+                <p style="font-size: 1.5rem;"><span id="totalScore">0</span> 🪵</p>
+            </div>
+            <div class="stat-item">
+                <h3>Авто-клик</h3>
+                <p style="font-size: 1.5rem;"><span id="autoClick">0</span>/сек</p>
+            </div>
+            <div class="stat-item">
+                <h3>Уровень</h3>
+                <p style="font-size: 1.5rem;"><span id="level">1</span> 🌟</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+        let totalScore = 0;
+        let perClick = 1;
+        let autoClick = 0;
+        let level = 1;
+        
+        const upgrades = {
+            sharpTeeth: { 
+                bought: 0,
+                baseCost: 50,
+                effect: 2,
+                maxLevel: 5
+            },
+            strongTail: { 
+                bought: 0,
+                baseCost: 100,
+                effect: 5,
+                maxLevel: 3
+            }
+        };
+
+        function updateDisplay() {
+            document.getElementById('score').textContent = Math.floor(score);
+            document.getElementById('perClick').textContent = perClick;
+            document.getElementById('totalScore').textContent = Math.floor(totalScore);
+            document.getElementById('autoClick').textContent = autoClick;
+            document.getElementById('level').textContent = level;
+
+            // Обновление прогресса улучшений
+            for (const upgrade in upgrades) {
+                const element = document.getElementById(`${upgrade}-progress`);
+                const costElement = document.getElementById(`${upgrade}-cost`);
+                if (element && costElement) {
+                    element.style.width = `${(upgrades[upgrade].bought / upgrades[upgrade].maxLevel) * 100}%`;
+                    costElement.textContent = Math.floor(getUpgradeCost(upgrade));
+                }
+            }
+        }
+
+        function getUpgradeCost(upgradeName) {
+            return upgrades[upgradeName].baseCost * (upgrades[upgradeName].bought + 1);
+        }
+
+        function clickBeaver() {
+            score += perClick;
+            totalScore += perClick;
+            checkLevelUp();
+            updateDisplay();
+            addClickEffect();
+        }
+
+        function buyUpgrade(upgradeName) {
+            const upgrade = upgrades[upgradeName];
+            const cost = getUpgradeCost(upgradeName);
+            
+            if (upgrade.bought < upgrade.maxLevel && score >= cost) {
+                score -= cost;
+                upgrade.bought++;
+                perClick += upgrade.effect;
+                checkLevelUp();
+                updateDisplay();
+            }
+        }
+
+        function checkLevelUp() {
+            const newLevel = Math.floor(totalScore / 1000) + 1;
+            if (newLevel > level) {
+                level = newLevel;
+                perClick += level * 2;
+                autoClick += level;
+            }
+        }
+
+        function addClickEffect() {
+            const effect = document.createElement('div');
+            effect.style.position = 'fixed';
+            effect.style.left = `${event.clientX}px`;
+            effect.style.top = `${event.clientY}px`;
+            effect.style.pointerEvents = 'none';
+            effect.style.transform = 'translate(-50%, -50%)';
+            effect.style.fontSize = '1.2rem';
+            effect.style.color = '#DEB887';
+            effect.textContent = `+${perClick}`;
+            
+            document.body.appendChild(effect);
+            
+            setTimeout(() => {
+                effect.style.transform = 'translate(-50%, -150%)';
+                effect.style.opacity = '0';
+                setTimeout(() => effect.remove(), 1000);
+            }, 50);
+        }
+
+        // Авто-клик
+        setInterval(() => {
+            score += autoClick;
+            totalScore += autoClick;
+            checkLevelUp();
+            updateDisplay();
+        }, 1000);
+
+        // Сохранение
+        function saveGame() {
+            const saveData = {
+                score,
+                totalScore,
+                perClick,
+                autoClick,
+                level,
+                upgrades
+            };
+            localStorage.setItem('beaverPondSave', JSON.stringify(saveData));
+        }
+
+        // Загрузка
+        function loadGame() {
+            const saveData = JSON.parse(localStorage.getItem('beaverPondSave'));
+            if (saveData) {
+                score = saveData.score || 0;
+                totalScore = saveData.totalScore || 0;
+                perClick = saveData.perClick || 1;
+                autoClick = saveData.autoClick || 0;
+                level = saveData.level || 1;
+                upgrades.sharpTeeth.bought = saveData.upgrades?.sharpTeeth.bought || 0;
+                upgrades.strongTail.bought = saveData.upgrades?.strongTail.bought || 0;
+                updateDisplay();
+            }
+        }
+
+        // Автосохранение каждые 30 секунд
+        setInterval(saveGame, 30000);
+        window.addEventListener('beforeunload', saveGame);
+        loadGame();
+    </script>
+</body>
+  </html>
