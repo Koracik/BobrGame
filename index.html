@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Бобриный Пруд🏞️</title>
+    <title>Бобриный Пруд Pro++</title>
     <style>
         :root {
             --bg: #f8f5f2;
@@ -12,6 +12,7 @@
             --secondary: #6b8e23;
             --border: #dcd4cc;
             --boost: #ff6b6b;
+            --error: #ff4757;
         }
 
         * {
@@ -123,6 +124,13 @@
             padding: 0.5rem 1rem;
             border-radius: 20px;
             font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .upgrade-cost.disabled {
+            background: #ccc;
+            text-decoration: line-through;
+            cursor: not-allowed;
         }
 
         .upgrade-badge {
@@ -151,10 +159,41 @@
             animation: pulse 1s infinite;
         }
 
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            font-size: 1.2rem;
+            animation: float 1s ease-out forwards;
+            z-index: 1000;
+        }
+
+        .achievement-toast {
+            position: fixed;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--secondary);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 2rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .achievement-toast.show {
+            opacity: 1;
+        }
+
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(255,107,107,0.4); }
             70% { box-shadow: 0 0 0 10px rgba(255,107,107,0); }
             100% { box-shadow: 0 0 0 0 rgba(255,107,107,0); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-80px) scale(0.5); opacity: 0; }
         }
 
         @media (max-width: 480px) {
@@ -172,11 +211,11 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1>Бобриный Пруд Pro</h1>
+            <h1>Бобриный Пруд Pro++</h1>
         </header>
 
         <main class="main">
-            <button class="click-area" id="clicker" onclick="clickBeaver()"></button>
+            <button class="click-area" id="clicker"></button>
 
             <div class="stats">
                 <div class="stat">
@@ -225,6 +264,7 @@
     <script>
         // Игровые переменные
         let score = 0;
+        let totalClicks = 0;
         let perClickBase = 1;
         let combo = 1;
         let comboTimeout;
@@ -247,6 +287,16 @@
             }
         };
 
+        // Достижения
+        const achievements = {
+            firstClick: { unlocked: false, condition: () => totalClicks >= 1 },
+            hundredClicks: { unlocked: false, condition: () => totalClicks >= 100 },
+            millionaire: { unlocked: false, condition: () => score >= 1000000 }
+        };
+
+        // Инициализация кликера
+        document.getElementById('clicker').addEventListener('click', clickBeaver);
+
         // Расчет силы клика
         function getPerClick() {
             let multiplier = 1;
@@ -259,11 +309,30 @@
         }
 
         // Обработка клика
-        function clickBeaver() {
+        function clickBeaver(event) {
             score += getPerClick();
+            totalClicks++;
             handleCombo();
             updateUI();
             animateClick();
+            createParticles(event);
+            checkAchievements();
+            vibrate(50);
+        }
+
+        // Создание частиц
+        function createParticles(event) {
+            const particles = 5;
+            for (let i = 0; i < particles; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.textContent = `+${formatNumber(getPerClick())}`;
+                particle.style.left = `${event.clientX}px`;
+                particle.style.top = `${event.clientY}px`;
+                document.body.appendChild(particle);
+                
+                setTimeout(() => particle.remove(), 1000);
+            }
         }
 
         // Система комбо
@@ -280,25 +349,27 @@
 
         // Покупка улучшений
         function buyUpgrade(type) {
-            const upgrade = upgrades[type];
-            const cost = Math.floor(upgrade.baseCost * Math.pow(upgrade.costMultiplier, upgrade.level - 1));
+            const cost = calculateUpgradeCost(type);
             
             if (score >= cost) {
                 score -= cost;
-                upgrade.level++;
+                upgrades[type].level++;
                 updateUI();
                 saveGame();
+                vibrate(30);
             }
         }
 
         // Активация буста
         function buyBoost() {
-            if (score >= 250 && !boostActive) {
-                score -= 250;
+            const cost = 250;
+            if (score >= cost && !boostActive) {
+                score -= cost;
                 boostActive = true;
                 boostTimeLeft = 30;
                 updateUI();
                 saveGame();
+                vibrate(100);
                 
                 const boostTimer = setInterval(() => {
                     boostTimeLeft--;
@@ -313,22 +384,37 @@
 
         // Обновление интерфейса
         function updateUI() {
-            document.getElementById('score').textContent = Math.floor(score);
-            document.getElementById('perClick').textContent = getPerClick().toFixed(1);
+            document.getElementById('score').textContent = formatNumber(score);
+            document.getElementById('perClick').textContent = formatNumber(getPerClick());
             
             // Обновление улучшений
             for (const type in upgrades) {
                 document.getElementById(`${type}-level`).textContent = upgrades[type].level;
-                document.getElementById(`${type}-cost`).textContent = Math.floor(
-                    upgrades[type].baseCost * Math.pow(upgrades[type].costMultiplier, upgrades[type].level - 1)
-                );
+                const costElement = document.getElementById(`${type}-cost`);
+                const cost = calculateUpgradeCost(type);
+                costElement.textContent = formatNumber(cost);
+                costElement.classList.toggle('disabled', score < cost);
             }
             
             // Обновление буста
             const boostButton = document.getElementById('boost-button');
-            boostActive ? 
-                boostButton.classList.add('boost-active') : 
-                boostButton.classList.remove('boost-active');
+            const boostCost = 250;
+            boostButton.querySelector('.upgrade-cost').textContent = formatNumber(boostCost);
+            boostButton.querySelector('.upgrade-cost').classList.toggle('disabled', score < boostCost || boostActive);
+            boostButton.classList.toggle('boost-active', boostActive);
+        }
+
+        // Форматирование чисел
+        function formatNumber(num) {
+            return num.toLocaleString('ru-RU', { maximumFractionDigits: 1 });
+        }
+
+        // Расчет стоимости улучшения
+        function calculateUpgradeCost(type) {
+            return Math.floor(
+                upgrades[type].baseCost * 
+                Math.pow(upgrades[type].costMultiplier, upgrades[type].level - 1)
+            );
         }
 
         // Таймер буста
@@ -348,14 +434,52 @@
             setTimeout(() => clicker.style.transform = 'scale(1)', 100);
         }
 
+        // Система достижений
+        function checkAchievements() {
+            for (const [key, achievement] of Object.entries(achievements)) {
+                if (!achievement.unlocked && achievement.condition()) {
+                    achievement.unlocked = true;
+                    showAchievementToast(key);
+                }
+            }
+        }
+
+        // Показ достижений
+        function showAchievementToast(key) {
+            const messages = {
+                firstClick: '🎉 Первый шаг к величию!',
+                hundredClicks: '🏆 Стодневка бобра!',
+                millionaire: '💰 Бобриный олигарх!'
+            };
+            
+            const toast = document.createElement('div');
+            toast.className = 'achievement-toast show';
+            toast.textContent = messages[key];
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Виброотклик
+        function vibrate(duration) {
+            if ('vibrate' in navigator) {
+                navigator.vibrate(duration);
+            }
+        }
+
         // Система сохранения
         function saveGame() {
             const saveData = {
                 score,
+                totalClicks,
                 perClickBase,
                 upgrades,
                 boostActive,
-                boostTimeLeft
+                boostTimeLeft,
+                achievements
             };
             localStorage.setItem('beaverPondProSave', JSON.stringify(saveData));
         }
@@ -365,11 +489,13 @@
             const saveData = JSON.parse(localStorage.getItem('beaverPondProSave'));
             if (saveData) {
                 score = saveData.score || 0;
+                totalClicks = saveData.totalClicks || 0;
                 perClickBase = saveData.perClickBase || 1;
                 upgrades.teeth.level = saveData.upgrades?.teeth.level || 1;
                 upgrades.tail.level = saveData.upgrades?.tail.level || 1;
                 boostActive = saveData.boostActive || false;
                 boostTimeLeft = saveData.boostTimeLeft || 0;
+                Object.assign(achievements, saveData.achievements);
                 
                 if (boostActive) {
                     const boostTimer = setInterval(() => {
@@ -386,7 +512,7 @@
             }
         }
 
-        // Автосохранение каждые 30 секунд
+        // Автосохранение
         setInterval(saveGame, 30000);
         window.addEventListener('beforeunload', saveGame);
         loadGame();
