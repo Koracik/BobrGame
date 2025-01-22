@@ -45,10 +45,11 @@
             border-bottom: 1px solid var(--border);
         }
 
-        .click-area {
+                .click-area {
             width: 200px;
             height: 200px;
             margin: 0 auto;
+            display: block;
             background: white;
             border-radius: 50%;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
@@ -57,11 +58,13 @@
             border: none;
             position: relative;
         }
-
+        
+        /* Анимация при клике */
         .click-area:active {
             transform: scale(0.98);
         }
-
+        
+        /* Стиль бобра внутри кнопки */
         .click-area::after {
             content: '🦫';
             font-size: 4rem;
